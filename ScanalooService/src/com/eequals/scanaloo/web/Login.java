@@ -52,6 +52,7 @@ public class Login extends HttpServlet {
 			if(user_id >= 0)
 			{
 				request.setAttribute("name", first_name);
+				Scanaloo.sendNotification(user_id, "Login successful");
 				request.getRequestDispatcher("/WEB-INF/hello.jsp").forward(
 						request, response);
 			}
@@ -59,8 +60,6 @@ public class Login extends HttpServlet {
 			response.setContentType("text/plain");
 			response.getWriter().print("user_id:" + user_id);
 		}
-		
-		
 				
 	}
 	

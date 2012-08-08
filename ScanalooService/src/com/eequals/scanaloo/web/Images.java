@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.eequals.scanaloo.util.Scanaloo;
 
-@WebServlet(name="images", urlPatterns={"/images"})
+@WebServlet("/images")
 public class Images extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -26,13 +26,11 @@ public class Images extends HttpServlet {
 		
 		try {
 			System.out.println("Image request received.");
-			ResultSet result = Scanaloo.db.doSelect(
-					"select img_content from [image] where [id] = " + img_id);
 			
-			if (result.next())
+			byte[] bytes = Scanaloo.db.getImage(img_id);
+			
+			if (bytes != null)
 			{
-				byte[] bytes = result.getBytes("img_content");
-				
 				response.setContentType("image/jpeg");
 				response.setContentLength(bytes.length);
 				OutputStream out = response.getOutputStream();
@@ -41,7 +39,7 @@ public class Images extends HttpServlet {
 				out.close();
 				System.out.println("Image sent.");
 			}
-			
+	
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

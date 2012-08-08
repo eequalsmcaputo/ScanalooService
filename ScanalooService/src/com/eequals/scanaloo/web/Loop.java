@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import com.eequals.scanaloo.util.Scanaloo;
+import com.restfb.*;
 
 @WebServlet("/loop")
 @MultipartConfig 
@@ -41,15 +42,16 @@ public class Loop extends HttpServlet {
 		if(photo != null)
 		{
 
-			int user_id = Integer.parseInt(request.getParameter("loop[user_id]"));
+			long user_id = Long.parseLong(request.getParameter("loop[user_id]"));
 			String title = request.getParameter("loop[title]");
 			String category = request.getParameter("loop[category]");
 			String friends = request.getParameter("loop[friends]");
 			
 			InputStream img = photo.getInputStream();
 
-			long loop_id = newLoop(user_id, title, category, friends, img);
-			
+			long loop_id = Scanaloo.newLoop(user_id, title, category, friends, img);
+			Scanaloo.fbPostLoopOnPage("Scanaloo", user_id, loop_id);
+						
 	        response.addHeader("loop_id", String.valueOf(loop_id));
 	        response.addHeader("message", "Loop started successfully!");
 	        response.addDateHeader("loop_start", System.currentTimeMillis());
@@ -58,47 +60,7 @@ public class Loop extends HttpServlet {
 
 	}
 	
-	public long newLoop(int user_id, String title, String category, String friends,
-			InputStream img) {
-		   try {
-		      CallableStatement cstmt = Scanaloo.db.getStoredProcCall(
-		    		  "dbo.pr_loop_new", 4);
-		      cstmt.setInt(1, user_id);
-		      cstmt.setInt(2, 1);
-		      cstmt.setString(3, title);
-		      cstmt.setString(4, category);
-		      
-		      System.out.println("Start Loop...");
-		      
-		      ResultSet result = cstmt.executeQuery();
-		      long loop_id = 0;
-		      long product_id = 0;
-		      
-		      if (result.next())
-		      {
-		    	  loop_id = result.getLong("loop_id");
-		    	  product_id = result.getLong("product_id");
-		      }
-		      
-		      cstmt.close();
-		      
-		      System.out.println("Loop Created.  Add Image...");
-		      
-		      try {
-		    	  Scanaloo.db.addImage(product_id, 1, img);
-		      } catch (SQLException e) {
-		    	  e.printStackTrace();
-		    	  return -1;
-		      }
-		      
-		      System.out.println("Loop Started.");
-		      return loop_id;
-		   }
-		   catch (Exception e) {
-		      e.printStackTrace();
-		      return -1;
-		   }
-	}
+	
 	
 	/*
 	 final String store = "C:\\Development\\Projects\\Scanaloo\\Test\\upload\\";

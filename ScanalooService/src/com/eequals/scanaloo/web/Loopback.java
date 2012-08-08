@@ -54,11 +54,7 @@ public class Loopback extends HttpServlet {
 		String sql = "insert into loopback (loop_id, [user_id], vote, comment) " +
 		"values (" + loop_id + ", " + user_id + ", " + vote + ", '" + comment + "')";
 		
-		try {
-			Scanaloo.db.doCommand(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		Scanaloo.db.doCommand(sql);
 		
 		response.sendRedirect("loops?user_id=" + user_id + 
 				"&type=" + Scanaloo.TYPE_LOOPS);

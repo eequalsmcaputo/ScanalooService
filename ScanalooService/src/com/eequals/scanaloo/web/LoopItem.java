@@ -1,8 +1,13 @@
 package com.eequals.scanaloo.web;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+
+import com.eequals.scanaloo.util.Scanaloo;
 
 public class LoopItem {
 	
@@ -98,6 +103,16 @@ public class LoopItem {
 	private String getMyDispString()
 	{
 		return title + ": " + loop_age + " (" + loopback_cnt + ")";
+	}
+	
+	public byte[] getImage()
+	{
+		return Scanaloo.db.getImage(image_id);
+	}
+	
+	public InputStream getImageStream()
+	{
+		return new ByteArrayInputStream(getImage());
 	}
 	
 }
